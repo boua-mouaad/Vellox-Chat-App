@@ -73,7 +73,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
             logger.debug("JWT Token is expired: " + e.getMessage());
         } catch (Exception e) {
-            // Catches any other JWT or authentication errors (malformed, signature invalid, etc.)
             logger.error("Cannot set user authentication: " + e.getMessage());
         }
 
