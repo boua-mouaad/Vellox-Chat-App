@@ -33,6 +33,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
 
+        if (email == null) {
+            String login = oAuth2User.getAttribute("login");
+            Object id = oAuth2User.getAttribute("id");
+            if (login != null) {
+                email = (id != null ? id : "github") + "+" + login + "@users.noreply.github.com";
+            }
+        }
+
         // 2. Charge notre UserDetails depuis notre CustomUserDetailsService
         // (pour s'assurer que le "Subject" du JWT est bien notre UUID de la base de données)
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);

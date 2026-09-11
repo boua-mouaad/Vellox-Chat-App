@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mouaad.vellox.dtos.RoomSummaryDto;
+
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -73,6 +76,25 @@ public class RoomService {
 
         roomMemberRepository.save(newMember);
 
+    }
+
+    /**
+     * Retrieves all rooms the specified user is a member of.
+     */
+    @Transactional(readOnly = true)
+    public List<RoomSummaryDto> getUserRooms(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return roomMemberRepository.findAllByUser(user).stream()
+                .map(member -> RoomSummaryDto.builder()
+                        .id(member.getRoom().getId())
+                        .name(member.getRoom().getName())
+                        .roomCode(member.getRoom().getRoomCode())
+                        .role(member.getRole().name())
+                        .ownerUsername(member.getRoom().getOwner() != null ? member.getRoom().getOwner().getUsername() : null)
+                        .build())
+                .toList();
     }
 
     //Method to generate an 8-character alphanumeric code

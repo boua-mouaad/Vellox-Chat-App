@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -52,9 +53,27 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService)
                         )
                         .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler((request, response, exception) -> {
+                            String errorMsg = exception.getMessage();
+                            if (exception instanceof OAuth2AuthenticationException oAuth2Ex && oAuth2Ex.getError() != null) {
+                                if (oAuth2Ex.getError().getDescription() != null) {
+                                    errorMsg = oAuth2Ex.getError().getDescription();
+                                } else if (oAuth2Ex.getError().getErrorCode() != null) {
+                                    errorMsg = oAuth2Ex.getError().getErrorCode();
+                                }
+                            }
+                            if (errorMsg == null && exception.getCause() != null) {
+                                errorMsg = exception.getCause().getMessage();
+                            }
+                            if (errorMsg == null) {
+                                errorMsg = exception.getClass().getSimpleName();
+                            }
+                            response.sendRedirect("http://localhost:5173/auth?error=" + 
+                                java.net.URLEncoder.encode("OAuth2 login failed: " + errorMsg, java.nio.charset.StandardCharsets.UTF_8));
+                        })
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

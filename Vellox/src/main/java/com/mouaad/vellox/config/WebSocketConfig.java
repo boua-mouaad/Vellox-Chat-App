@@ -43,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:5173");
+                .setAllowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*");
     }
 
     /**
@@ -56,7 +56,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/app");
 
         // Server -> Client
-        registry.enableSimpleBroker("/topic", "/user");
+        registry.enableSimpleBroker("/topic", "/queue");
 
         // Private messages
         registry.setUserDestinationPrefix("/user");

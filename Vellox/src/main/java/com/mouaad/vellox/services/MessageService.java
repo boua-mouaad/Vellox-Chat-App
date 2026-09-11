@@ -1,5 +1,6 @@
 package com.mouaad.vellox.services;
 
+import com.mouaad.vellox.dtos.MessageResponseDto;
 import com.mouaad.vellox.entities.Message;
 import com.mouaad.vellox.entities.Room;
 import com.mouaad.vellox.entities.User;
@@ -32,7 +33,11 @@ public class MessageService {
     }
 
     @Transactional
-    public Message saveRoomMessage(UUID senderId, UUID roomId, String content) {
+    public MessageResponseDto saveRoomMessage(UUID senderId, UUID roomId, String content) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("Message content cannot be blank.");
+        }
+
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("Sender not found."));
 
@@ -46,12 +51,14 @@ public class MessageService {
         Message message = new Message();
         message.setSender(sender);
         message.setRoom(room);
-        message.setContent(content);
+        message.setContent(content.trim());
 
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+        return MessageResponseDto.fromEntity(savedMessage);
     }
 
-    public List<Message> getRoomMessages(UUID userId, UUID roomId) {
+    @Transactional(readOnly = true)
+    public List<MessageResponseDto> getRoomMessages(UUID userId, UUID roomId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
 
@@ -62,11 +69,22 @@ public class MessageService {
             throw new SecurityException("You do not have permission to view this room's history.");
         }
 
-        return messageRepository.findByRoomOrderByCreatedAtAsc(room);
+        return messageRepository.findByRoomOrderByCreatedAtAsc(room)
+                .stream()
+                .map(MessageResponseDto::fromEntity)
+                .toList();
     }
 
     @Transactional
-    public Message savePrivateMessage(UUID senderId, UUID receiverId, String content) {
+    public MessageResponseDto savePrivateMessage(UUID senderId, UUID receiverId, String content) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("Message content cannot be blank.");
+        }
+
+        if (senderId.equals(receiverId)) {
+            throw new IllegalArgumentException("You cannot send a private message to yourself.");
+        }
+
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("Sender not found."));
 
@@ -76,18 +94,23 @@ public class MessageService {
         Message message = new Message();
         message.setSender(sender);
         message.setReceiver(receiver);
-        message.setContent(content);
+        message.setContent(content.trim());
 
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+        return MessageResponseDto.fromEntity(savedMessage);
     }
 
-    public List<Message> getPrivateMessages(UUID userId1, UUID userId2) {
+    @Transactional(readOnly = true)
+    public List<MessageResponseDto> getPrivateMessages(UUID userId1, UUID userId2) {
         User user1 = userRepository.findById(userId1)
                 .orElseThrow(() -> new IllegalArgumentException("First user not found."));
 
         User user2 = userRepository.findById(userId2)
                 .orElseThrow(() -> new IllegalArgumentException("Second user not found."));
 
-        return messageRepository.findPrivateMessages(user1, user2);
+        return messageRepository.findPrivateMessages(user1, user2)
+                .stream()
+                .map(MessageResponseDto::fromEntity)
+                .toList();
     }
 }

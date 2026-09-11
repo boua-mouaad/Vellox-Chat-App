@@ -1,7 +1,7 @@
 package com.mouaad.vellox.controllers;
 
 import com.mouaad.vellox.dtos.LiveMessagePayload;
-import com.mouaad.vellox.entities.Message;
+import com.mouaad.vellox.dtos.MessageResponseDto;
 import com.mouaad.vellox.services.MessageService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -40,14 +40,13 @@ public class ChatController {
             UUID senderId = UUID.fromString(principal.getName());
 
             // 1. Save the message to the PostgreSQL database via our secure service
-            Message savedMessage = messageService.saveRoomMessage(senderId, roomId, payload.getContent());
+            MessageResponseDto savedMessage = messageService.saveRoomMessage(senderId, roomId, payload.getContent());
 
-            // 2. Broadcast the saved message to everyone subscribed to this room's topic
+            // 2. Broadcast the saved message DTO to everyone subscribed to this room's topic
             // React listens on: /topic/room/{roomId}
             messagingTemplate.convertAndSend("/topic/room/" + roomId, savedMessage);
 
         } catch (Exception e) {
-            // In a production app, you might send an error message back to the specific user here
             System.err.println("Failed to process room message: " + e.getMessage());
         }
     }
@@ -66,9 +65,9 @@ public class ChatController {
             UUID receiverId = payload.getTargetId();
 
             // 1. Save the private message to the database
-            Message savedMessage = messageService.savePrivateMessage(senderId, receiverId, payload.getContent());
+            MessageResponseDto savedMessage = messageService.savePrivateMessage(senderId, receiverId, payload.getContent());
 
-            // 2. Broadcast the message directly to the recipient's private queue
+            // 2. Broadcast the message DTO directly to the recipient's private queue
             // Spring dynamically resolves this to: /user/{receiverId}/queue/messages
             messagingTemplate.convertAndSendToUser(
                     receiverId.toString(),

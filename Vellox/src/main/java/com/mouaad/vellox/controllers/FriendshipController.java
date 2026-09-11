@@ -2,6 +2,8 @@ package com.mouaad.vellox.controllers;
 
 import com.mouaad.vellox.dtos.ApiResponse;
 import com.mouaad.vellox.dtos.FriendRequestDto;
+import com.mouaad.vellox.dtos.FriendshipResponseDto;
+import com.mouaad.vellox.dtos.UserSummaryDto;
 import com.mouaad.vellox.services.FriendshipService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,24 +25,38 @@ public class FriendshipController {
     }
 
     /**
+     * Retrieves all active accepted friends for the logged-in user.
+     */
+    @GetMapping
+    public ResponseEntity<List<UserSummaryDto>> getFriends(Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        List<UserSummaryDto> friends = friendshipService.getAcceptedFriends(userId);
+        return ResponseEntity.ok(friends);
+    }
+
+    /**
+     * Retrieves all pending incoming friend requests for the logged-in user.
+     */
+    @GetMapping("/requests/pending")
+    public ResponseEntity<List<FriendshipResponseDto>> getPendingRequests(Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        List<FriendshipResponseDto> pending = friendshipService.getPendingFriendRequests(userId);
+        return ResponseEntity.ok(pending);
+    }
+
+    /**
      * Sends a friend request to another user by their username.
      */
     @PostMapping("/requests")
     public ResponseEntity<ApiResponse> sendRequest(
             @Valid @RequestBody FriendRequestDto requestDto,
             Principal principal) {
-        try {
-            // principal.getName() extracts the authenticated user's ID from the JWT token
-            UUID requesterId = UUID.fromString(principal.getName());
+        UUID requesterId = UUID.fromString(principal.getName());
+        friendshipService.sendFriendRequest(requesterId, requestDto.getTargetUsername());
 
-            friendshipService.sendFriendRequest(requesterId, requestDto.getTargetUsername());
-
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(new ApiResponse("Friend request sent successfully.", true));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), false));
-        }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse("Friend request sent successfully.", true));
     }
 
     /**
@@ -49,15 +66,10 @@ public class FriendshipController {
     public ResponseEntity<ApiResponse> acceptRequest(
             @PathVariable("id") UUID friendshipId,
             Principal principal) {
-        try {
-            UUID targetUserId = UUID.fromString(principal.getName());
+        UUID targetUserId = UUID.fromString(principal.getName());
+        friendshipService.acceptFriendRequest(friendshipId, targetUserId);
 
-            friendshipService.acceptFriendRequest(friendshipId, targetUserId);
-
-            return ResponseEntity.ok(new ApiResponse("Friend request accepted.", true));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), false));
-        }
+        return ResponseEntity.ok(new ApiResponse("Friend request accepted.", true));
     }
 
     /**
@@ -67,18 +79,9 @@ public class FriendshipController {
     public ResponseEntity<ApiResponse> declineRequest(
             @PathVariable("id") UUID friendshipId,
             Principal principal) {
-        try {
-            UUID targetUserId = UUID.fromString(principal.getName());
+        UUID targetUserId = UUID.fromString(principal.getName());
+        friendshipService.declineFriendRequest(friendshipId, targetUserId);
 
-            friendshipService.declineFriendRequest(friendshipId, targetUserId);
-
-            return ResponseEntity.ok(new ApiResponse("Friend request declined.", true));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), false));
-        }
+        return ResponseEntity.ok(new ApiResponse("Friend request declined.", true));
     }
-
-
-
-
 }

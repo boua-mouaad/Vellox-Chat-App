@@ -51,8 +51,57 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * A generic catch-all for any unexpected server crashes (NullPointerExceptions, DB drops).
-     * Prevents the stack trace from leaking to the frontend.
+     * Intercepts IllegalStateExceptions (e.g. "You are already in this room").
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse> handleIllegalStateException(IllegalStateException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ApiResponse(ex.getMessage(), false));
+    }
+
+    /**
+     * Intercepts SecurityExceptions (e.g. unauthorized room access or friendship operations).
+     */
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<ApiResponse> handleSecurityException(SecurityException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ApiResponse(ex.getMessage(), false));
+    }
+
+    /**
+     * Intercepts authentication failures (invalid credentials).
+     */
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ApiResponse> handleBadCredentialsException(org.springframework.security.authentication.BadCredentialsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse("Invalid email/username or password.", false));
+    }
+
+    /**
+     * Intercepts unverified or disabled user login attempts.
+     */
+    @ExceptionHandler(org.springframework.security.authentication.DisabledException.class)
+    public ResponseEntity<ApiResponse> handleDisabledException(org.springframework.security.authentication.DisabledException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ApiResponse("Please verify your email address before logging in.", false));
+    }
+
+    /**
+     * Intercepts user not found exceptions.
+     */
+    @ExceptionHandler(org.springframework.security.core.userdetails.UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleUsernameNotFoundException(org.springframework.security.core.userdetails.UsernameNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse(ex.getMessage(), false));
+    }
+
+    /**
+     * A generic catch-all for any unexpected server crashes.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {

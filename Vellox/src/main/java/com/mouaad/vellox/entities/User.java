@@ -1,5 +1,6 @@
 package com.mouaad.vellox.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class User {
 
     //2. Authentication & Security
 
+    @JsonIgnore
     @Column(name = "password_hash", length = 255)
     private String passwordHash;
 
@@ -42,7 +44,7 @@ public class User {
     //3. Auditing Fields
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    @Column(name = "upadated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -53,6 +55,11 @@ public class User {
         if (this.authProvider == null) {
             this.authProvider = "LOCAL";
         }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
 

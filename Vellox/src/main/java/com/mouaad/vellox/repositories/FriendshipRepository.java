@@ -23,8 +23,15 @@ public interface FriendshipRepository extends JpaRepository<Friendship, UUID> {
 
     // Finds a specific pending request to accept or decline
     Optional<Friendship> findByIdAndStatus(UUID id, FriendshipStatus status);
+
+    // Retrieves pending incoming requests for a user
+    List<Friendship> findByAddresseeAndStatus(User addressee, FriendshipStatus status);
+
+    // Retrieves pending outgoing requests sent by a user
+    List<Friendship> findByRequesterAndStatus(User requester, FriendshipStatus status);
+
     // Retrieves all active friends for a specific user
     @Query("SELECT f FROM Friendship f WHERE " +
-            "(f.requester = :user OR f.addressee = :user) AND f.status = 'ACCEPTED'")
-    List<Friendship> findAllAcceptedFriendsByUser(@Param("user") User user);
+            "(f.requester = :user OR f.addressee = :user) AND f.status = :status")
+    List<Friendship> findAllFriendsByUserAndStatus(@Param("user") User user, @Param("status") FriendshipStatus status);
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,10 +19,21 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
-        // 1. Try to find the user by Email first. If not found, try by Username.
-        User user = userRepository.findByEmail(identifier)
-                .orElseGet(() -> userRepository.findByUsername(identifier)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found with email or username: " + identifier)));
+        // 1. Try to find the user by UUID first (since JWT subject is the user's UUID)
+        User user = null;
+        try {
+            UUID userId = UUID.fromString(identifier);
+            user = userRepository.findById(userId).orElse(null);
+        } catch (IllegalArgumentException ignored) {
+            // Not a UUID string, proceed to lookup by Email or Username
+        }
+
+        // 2. If not found by UUID, try to find the user by Email, then Username
+        if (user == null) {
+            user = userRepository.findByEmail(identifier)
+                    .orElseGet(() -> userRepository.findByUsername(identifier)
+                            .orElseThrow(() -> new UsernameNotFoundException("User not found with email, username or id: " + identifier)));
+        }
         // 2. Map our custom JPA User entity to Spring Security's expected UserDetails object
         return org.springframework.security.core.userdetails.User.builder()
                 // We set the Subject/Principal to the UUID string.

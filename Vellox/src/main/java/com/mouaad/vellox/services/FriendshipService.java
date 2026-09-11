@@ -1,5 +1,7 @@
 package com.mouaad.vellox.services;
 
+import com.mouaad.vellox.dtos.FriendshipResponseDto;
+import com.mouaad.vellox.dtos.UserSummaryDto;
 import com.mouaad.vellox.entities.Friendship;
 import com.mouaad.vellox.entities.FriendshipStatus;
 import com.mouaad.vellox.entities.User;
@@ -9,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,7 +24,7 @@ public class FriendshipService {
      * Initiates a friend request from one user to another via username.
      */
     @Transactional
-    public Friendship sendFriendRequest(UUID requesterId, String targetUsername) {
+    public FriendshipResponseDto sendFriendRequest(UUID requesterId, String targetUsername) {
         User requester = userRepository.findById(requesterId)
                 .orElseThrow(() -> new IllegalArgumentException("Requester not found"));
 
@@ -40,7 +43,8 @@ public class FriendshipService {
         friendship.setAddressee(target);
         friendship.setStatus(FriendshipStatus.PENDING);
 
-        return friendshipRepository.save(friendship);
+        Friendship savedFriendship = friendshipRepository.save(friendship);
+        return FriendshipResponseDto.fromEntity(savedFriendship);
     }
 
     /**
@@ -65,14 +69,44 @@ public class FriendshipService {
      */
     @Transactional
     public void declineFriendRequest(UUID friendshipId, UUID targetUserId) {
-        //1.find the specific pending request
         Friendship friendship = friendshipRepository.findByIdAndStatus(friendshipId, FriendshipStatus.PENDING)
                 .orElseThrow(() -> new IllegalArgumentException("Pending friend request not found"));
         if (!friendship.getAddressee().getId().equals(targetUserId)) {
             throw new SecurityException("You are not authorized to decline this request.");
         }
-        friendship.setStatus(FriendshipStatus.REJECTED);
         friendshipRepository.delete(friendship);
+    }
+
+    /**
+     * Retrieves all active accepted friends for a specific user.
+     */
+    @Transactional(readOnly = true)
+    public List<UserSummaryDto> getAcceptedFriends(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        List<Friendship> friendships = friendshipRepository.findAllFriendsByUserAndStatus(user, FriendshipStatus.ACCEPTED);
+
+        return friendships.stream()
+                .map(f -> {
+                    User friend = f.getRequester().getId().equals(userId) ? f.getAddressee() : f.getRequester();
+                    return UserSummaryDto.fromEntity(friend);
+                })
+                .toList();
+    }
+
+    /**
+     * Retrieves all pending friend requests received by a user.
+     */
+    @Transactional(readOnly = true)
+    public List<FriendshipResponseDto> getPendingFriendRequests(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return friendshipRepository.findByAddresseeAndStatus(user, FriendshipStatus.PENDING)
+                .stream()
+                .map(FriendshipResponseDto::fromEntity)
+                .toList();
     }
 }
 
