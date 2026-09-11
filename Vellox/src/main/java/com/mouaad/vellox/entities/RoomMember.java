@@ -10,13 +10,14 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "room_members")
+@Table(name = "room_members", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_room_member", columnNames = {"room_id", "user_id"})
+})
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoomMemebr {
-
+public class RoomMember {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

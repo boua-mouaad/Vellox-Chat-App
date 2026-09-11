@@ -7,10 +7,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
+
     private final JavaMailSender mailSender;
+
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
+
     @Async
     public void sendVerificationEmail(String toEmail, String code) {
         // 1. Create a simple text-based email
