@@ -1,6 +1,8 @@
 # Vellox ⚡
 ### Real-Time Chat & Collaboration Backend
 
+> For the full monorepo documentation, system architecture, and frontend setup, see the **[Master README](../README.md)**.
+
 **Vellox** is a scalable, modern real-time chat backend built with **Spring Boot**, **Spring Security (JWT & OAuth2)**, **PostgreSQL**, and **WebSockets (STOMP)**. It powers seamless group chat rooms, 1-on-1 private messaging, friendship workflows, and secure email verification.
 
 ---
