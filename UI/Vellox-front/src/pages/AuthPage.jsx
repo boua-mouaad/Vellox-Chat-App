@@ -100,7 +100,7 @@ export default function AuthPage() {
         
         {/* Header */}
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 shadow-[0_0_15px_rgba(34,211,238,0.3)] text-white font-bold text-xl">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-cyan-400 via-blue-500 to-purple-600 shadow-[0_0_15px_rgba(34,211,238,0.3)] text-white font-bold text-xl">
             {activeTab === 'verify' ? '✓' : 'V'}
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-50">
@@ -187,7 +187,7 @@ export default function AuthPage() {
             <button 
               type="submit" 
               disabled={isLoading || !identifier || !loginPassword} 
-              className="mt-2 w-full rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 py-2.5 text-sm font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
+              className="mt-2 w-full rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 py-2.5 text-sm font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -242,7 +242,7 @@ export default function AuthPage() {
             <button 
               type="submit" 
               disabled={isLoading || !regUsername || !regEmail || !regPassword} 
-              className="mt-2 w-full rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 py-2.5 text-sm font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
+              className="mt-2 w-full rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 py-2.5 text-sm font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
             >
               {isLoading ? 'Creating account...' : 'Create Account'}
             </button>
@@ -278,7 +278,7 @@ export default function AuthPage() {
             <button 
               type="submit" 
               disabled={isLoading || !verifyEmailAddress || verificationCode.length < 6} 
-              className="mt-2 w-full rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 py-2.5 text-sm font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
+              className="mt-2 w-full rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 py-2.5 text-sm font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
             >
               {isLoading ? 'Verifying...' : 'Verify Email & Proceed to Login'}
             </button>

@@ -155,7 +155,7 @@ export default function JoinRoomModal({ onClose, onRoomActionSuccess }) {
             <button
               type="button"
               onClick={onClose}
-              className="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:scale-[1.01] transition-transform"
+              className="w-full rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:scale-[1.01] transition-transform"
             >
               Done
             </button>
@@ -178,7 +178,7 @@ export default function JoinRoomModal({ onClose, onRoomActionSuccess }) {
             <button 
               type="submit"
               disabled={isLoading || !roomCode.trim()}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
             >
               {isLoading ? 'Joining...' : 'Join Room'}
             </button>
@@ -201,7 +201,7 @@ export default function JoinRoomModal({ onClose, onRoomActionSuccess }) {
             <button 
               type="submit"
               disabled={isLoading || !roomName.trim()}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
             >
               {isLoading ? 'Creating...' : 'Create Room'}
             </button>

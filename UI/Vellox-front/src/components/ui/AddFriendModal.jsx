@@ -99,7 +99,7 @@ export default function AddFriendModal({ onClose, onRequestSent }) {
           <button 
             type="submit"
             disabled={isLoading || !targetUsername.trim()}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(168,85,247,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-linear-to-r from-purple-500 to-indigo-600 py-2.5 text-xs font-bold text-white shadow-[0_0_15px_rgba(168,85,247,0.2)] transition-transform hover:scale-[1.02] disabled:opacity-50"
           >
             {isLoading ? 'Sending Request...' : 'Send Friend Request'}
           </button>

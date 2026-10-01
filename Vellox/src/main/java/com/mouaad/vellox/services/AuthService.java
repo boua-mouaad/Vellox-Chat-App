@@ -29,6 +29,7 @@ public class AuthService {
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Username already exists");
         }
+        
         // 2. Build and Save the User
         User newUser = new User();
         newUser.setUsername(username);

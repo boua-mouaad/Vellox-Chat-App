@@ -134,7 +134,7 @@ export default function ChatArea({ activeConversation, currentRoomId }) {
                 
                 {/* Avatar for received messages */}
                 {!isMine && (
-                  <div className="h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold mt-1 shadow-md">
+                  <div className="h-8 w-8 shrink-0 rounded-full bg-linear-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold mt-1 shadow-md">
                     {initials}
                   </div>
                 )}
@@ -153,7 +153,7 @@ export default function ChatArea({ activeConversation, currentRoomId }) {
                   
                   <div className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                     isMine 
-                      ? 'rounded-tr-sm bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_4px_15px_rgba(34,211,238,0.15)] border border-cyan-400/20' 
+                      ? 'rounded-tr-sm bg-linear-to-r from-cyan-600 to-blue-600 text-white shadow-[0_4px_15px_rgba(34,211,238,0.15)] border border-cyan-400/20' 
                       : 'rounded-tl-sm bg-[#131825] border-l-2 border-l-purple-500 border-y border-r border-slate-800/80 text-slate-200 shadow-[0_4px_15px_rgba(0,0,0,0.2)]'
                   }`}>
                     {msg.content}
@@ -162,7 +162,7 @@ export default function ChatArea({ activeConversation, currentRoomId }) {
 
                 {/* Avatar for my own messages */}
                 {isMine && (
-                  <div className="h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold mt-1 shadow-md">
+                  <div className="h-8 w-8 shrink-0 rounded-full bg-linear-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold mt-1 shadow-md">
                     {(user?.username || 'ME').substring(0, 2).toUpperCase()}
                   </div>
                 )}
@@ -192,7 +192,7 @@ export default function ChatArea({ activeConversation, currentRoomId }) {
           <button 
             type="submit" 
             disabled={!inputValue.trim()}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_10px_rgba(34,211,238,0.3)] hover:scale-105 transition-transform disabled:opacity-40 disabled:hover:scale-100 cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_10px_rgba(34,211,238,0.3)] hover:scale-105 transition-transform disabled:opacity-40 disabled:hover:scale-100 cursor-pointer"
           >
             <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
           </button>
