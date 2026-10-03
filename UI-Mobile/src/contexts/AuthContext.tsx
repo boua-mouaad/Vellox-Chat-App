@@ -36,7 +36,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 }
             } catch (error) {
                 console.error("Session check failed", error);
-                //If the token si expired or broken, clean it up;
+                //If the token is expired or broken, clean it up;
                 await SecureStore.deleteItemAsync('token');
             } finally {
                 setLoading(false);
@@ -90,4 +90,3 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default AuthProvider;
-
